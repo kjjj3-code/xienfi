@@ -492,9 +492,11 @@ function renderBoxes() {
       el.append(handle);
       placeBox(el, r);
       el.onpointerdown = (e) => {
+        // 터치에서는 첫 탭은 선택만: 화면을 넘기다 상자가 딸려 오지 않게
+        if (e.pointerType === "touch" && p.selected !== i) return setSelected(i);
         e.preventDefault();
         setSelected(i);
-        $("regions").children[i]?.scrollIntoView({ block: "nearest" });
+        if (e.pointerType !== "touch") $("regions").children[i]?.scrollIntoView({ block: "nearest" });
         const resize = e.target === handle;
         const k = p.w / $("stage").clientWidth;
         const start = { px: e.clientX, py: e.clientY, x: r.x, y: r.y, w: r.w, h: r.h };
@@ -603,27 +605,45 @@ $("retry").onclick = () => {
   pump();
 };
 
-function save(page) {
+function toFile(page) {
   const c = document.createElement("canvas");
   draw(page, c);
-  return new Promise((resolve) =>
-    c.toBlob((blob) => {
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = page.name.replace(/\.[^.]+$/, "") + "_translated.png";
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-      resolve();
-    }, "image/png"),
+  const name = page.name.replace(/\.[^.]+$/, "") + "_translated.png";
+  return new Promise((resolve, reject) =>
+    c.toBlob(
+      (blob) => (blob ? resolve(new File([blob], name, { type: "image/png" })) : reject(new Error("이미지가 너무 커서 저장하지 못했습니다."))),
+      "image/png",
+    ),
   );
 }
-$("download").onclick = () => save(current);
-$("downloadAll").onclick = async () => {
-  for (const p of pages.filter((p) => p.status === "done")) {
-    await save(p);
-    await new Promise((r) => setTimeout(r, 300));
+
+// 폰에서는 공유 시트를 띄워 사진 앱에 바로 저장할 수 있게 하고, PC 에서는 파일로 내려받습니다.
+const touchDevice = matchMedia("(pointer: coarse)").matches;
+async function save(list) {
+  try {
+    const files = [];
+    for (const p of list) files.push(await toFile(p));
+    if (touchDevice && navigator.canShare?.({ files })) {
+      try {
+        return await navigator.share({ files });
+      } catch (err) {
+        if (err.name === "AbortError") return; // 사용자가 공유를 닫음
+      }
+    }
+    for (const file of files) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(file);
+      a.download = file.name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      await new Promise((r) => setTimeout(r, 300));
+    }
+  } catch (err) {
+    alert(err.message);
   }
-};
+}
+$("download").onclick = () => save([current]);
+$("downloadAll").onclick = () => save(pages.filter((p) => p.status === "done"));
 
 addEventListener("keydown", (e) => {
   if (e.key !== "Delete" || !current || current.selected < 0) return;

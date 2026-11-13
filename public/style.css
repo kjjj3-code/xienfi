@@ -12,6 +12,7 @@
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+.mobile { display: none; }
 body {
   margin: 0;
   background: var(--bg);
@@ -104,7 +105,9 @@ aside { background: var(--panel); padding: 12px; overflow-y: auto; flex: none; }
 #stage { position: relative; width: min(100%, 900px); margin: 0 auto; }
 #canvas { display: block; width: 100%; height: auto; box-shadow: 0 4px 24px #0008; }
 #boxes { position: absolute; inset: 0; }
-.box { position: absolute; border: 1.5px dashed transparent; cursor: move; touch-action: none; }
+/* 선택 전에는 손가락으로 화면을 넘길 수 있고, 선택한 상자만 끌립니다 */
+.box { position: absolute; border: 1.5px dashed transparent; cursor: move; touch-action: pan-x pan-y; }
+.box.selected { touch-action: none; }
 .box:hover { border-color: #4aa3ffaa; }
 .box.selected { border-color: #4aa3ff; background: #4aa3ff14; }
 .box .handle {
@@ -124,10 +127,38 @@ dialog { background: var(--panel); color: var(--text); border: 1px solid var(--l
 dialog::backdrop { background: #000c; }
 dialog form { display: flex; flex-direction: column; gap: 10px; min-width: 240px; }
 
+#compare { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
 @media (max-width: 900px) {
-  main { flex-direction: column; overflow-y: auto; }
-  #pagesCol, #regionsCol { width: auto; border: 0; border-bottom: 1px solid var(--line); overflow: visible; }
+  .mobile { display: revert; }
+  .desktop { display: none; }
+  body { height: 100dvh; }
+  header { gap: 8px; padding: 8px 12px; padding-top: max(8px, env(safe-area-inset-top)); }
+  .settings { gap: 8px 10px; }
+  #model { display: none; }
+  /* iOS 는 16px 미만 입력칸에 포커스하면 화면을 확대합니다 */
+  select, textarea, input { font-size: 16px; }
+  button { padding: 10px 14px; }
+  main { flex-direction: column; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  aside { overflow: visible; }
+  #pagesCol { width: auto; border: 0; border-bottom: 1px solid var(--line); }
+  #regionsCol { width: auto; border: 0; border-top: 1px solid var(--line); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  #drop { padding: 12px 8px; }
   #pages { flex-direction: row; overflow-x: auto; }
-  #pages li { width: 110px; flex: none; }
-  #viewer, #stageWrap { overflow: visible; flex: none; }
+  #pages li { width: 96px; flex: none; }
+  #pages img { height: 110px; }
+  #stageCol { flex: none; }
+  #viewer { flex: none; }
+  .toolbar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 8px; gap: 6px; }
+  .toolbar #status { flex-basis: 100%; font-size: 12px; }
+  .toolbar .spacer { display: none; }
+  .toolbar button { flex: 1; padding: 10px 4px; white-space: nowrap; }
+  #stageWrap { overflow: visible; flex: none; padding: 8px; }
+  #empty { padding: 32px 20px; }
+}
+@media (pointer: coarse) {
+  .box .handle { width: 26px; height: 26px; right: -13px; bottom: -13px; border-radius: 50%; border: 3px solid #fff; }
+  .box.selected { border-width: 2px; }
+  #pages .remove { font-size: 20px; padding: 2px 8px; }
+  .region .del { padding: 8px 10px; }
 }

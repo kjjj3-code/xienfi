@@ -2,16 +2,18 @@ import http from "node:http";
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
 
 const PUBLIC_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "public");
-const HOST = process.env.HOST || "127.0.0.1";
+const PASSWORD = process.env.APP_PASSWORD || "";
+// 비밀번호를 설정했다면 폰 등 다른 기기에서도 접속할 수 있게 엽니다.
+const HOST = process.env.HOST || (PASSWORD ? "0.0.0.0" : "127.0.0.1");
 const PORT = Number(process.env.PORT || 3000);
 const MODEL = process.env.MODEL || "claude-opus-5-5";
-const PASSWORD = process.env.APP_PASSWORD || "";
 const MOCK = process.env.MOCK === "1";
 const MAX_BODY = 20 * 1024 * 1024;
 
@@ -158,6 +160,7 @@ const MIME = {
   ".css": "text/css; charset=utf-8",
   ".svg": "image/svg+xml",
   ".png": "image/png",
+  ".webmanifest": "application/manifest+json",
 };
 
 function sendJson(res, status, data, headers = {}) {
@@ -239,7 +242,14 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`만화 번역기 실행 중 → http://${isLoopback ? "localhost" : HOST}:${PORT}`);
+  console.log(`만화 번역기 실행 중 → http://localhost:${PORT}`);
+  if (!isLoopback) {
+    const lan = Object.values(os.networkInterfaces())
+      .flat()
+      .filter((n) => n && n.family === "IPv4" && !n.internal)
+      .map((n) => `http://${n.address}:${PORT}`);
+    if (lan.length) console.log(`같은 Wi-Fi 의 폰에서 접속 → ${lan.join("  또는  ")}`);
+  }
   console.log(MOCK ? "MOCK 모드: 실제 번역 없이 가짜 결과를 돌려줍니다." : `모델: ${MODEL}`);
   if (PASSWORD) console.log("비밀번호 보호가 켜져 있습니다.");
 });

@@ -2,7 +2,13 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d1f27">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="만화 번역기">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
 <title>나만의 만화 번역기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +58,8 @@
     <label id="drop" tabindex="0">
       <input type="file" id="file" accept="image/*" multiple hidden>
       <strong>이미지 올리기</strong>
-      <span>클릭 · 끌어다 놓기 · 붙여넣기(Ctrl+V)</span>
+      <span class="desktop">클릭 · 끌어다 놓기 · 붙여넣기(Ctrl+V)</span>
+      <span class="mobile">눌러서 사진·파일 선택</span>
     </label>
     <ul id="pages"></ul>
     <button id="downloadAll" type="button" hidden>전체 다운로드</button>
@@ -83,7 +90,8 @@
 
   <aside id="regionsCol" hidden>
     <h2>번역문 편집</h2>
-    <p class="muted">상자를 끌어 옮기거나 모서리로 크기를 바꿀 수 있습니다.</p>
+    <p class="muted desktop">상자를 끌어 옮기거나 모서리로 크기를 바꿀 수 있습니다.</p>
+    <p class="muted mobile">그림 위 글자를 한 번 눌러 선택한 뒤, 끌어서 옮기거나 파란 모서리로 크기를 바꿉니다.</p>
     <div id="regions"></div>
   </aside>
 </main>
