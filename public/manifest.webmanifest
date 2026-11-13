@@ -1,0 +1,9 @@
+{
+  "name": "나만의 만화 번역기",
+  "short_name": "만화 번역기",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#14151a",
+  "theme_color": "#1d1f27",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

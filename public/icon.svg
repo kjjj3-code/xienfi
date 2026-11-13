@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#1d1f27"/>
+  <path d="M112 136h288a40 40 0 0 1 40 40v136a40 40 0 0 1-40 40H260l-84 72v-72h-64a40 40 0 0 1-40-40V176a40 40 0 0 1 40-40z" fill="#ff7a59"/>
+  <text x="256" y="292" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="150" fill="#1b0d08">번</text>
+</svg>

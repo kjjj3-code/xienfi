@@ -1,0 +1,16 @@
+{
+  "name": "my-manga-translator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "개인용 만화 번역기 — 이미지를 올리면 말풍선을 찾아 번역해서 덮어씁니다.",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "mock": "MOCK=1 node --env-file-if-exists=.env server.js"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
+    "zod": "^4.0.0"
+  }
+}
