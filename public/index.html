@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나만의 만화 번역기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Jua&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>나만의 만화 번역기</h1>
+  <div class="settings">
+    <label>번역 언어
+      <select id="lang">
+        <option value="Korean">한국어</option>
+        <option value="English">English</option>
+        <option value="Japanese">日本語</option>
+        <option value="Simplified Chinese">简体中文</option>
+        <option value="Traditional Chinese">繁體中文</option>
+        <option value="Spanish">Español</option>
+        <option value="French">Français</option>
+        <option value="German">Deutsch</option>
+        <option value="Vietnamese">Tiếng Việt</option>
+        <option value="Thai">ไทย</option>
+        <option value="Indonesian">Bahasa Indonesia</option>
+        <option value="Russian">Русский</option>
+      </select>
+    </label>
+    <label>글꼴
+      <select id="font">
+        <option value="Jua">만화체 (Jua)</option>
+        <option value="Gaegu">손글씨 (Gaegu)</option>
+        <option value="Noto Sans KR">고딕 (Noto Sans)</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" id="sfx"> 효과음도 번역</label>
+    <button id="notesBtn" class="ghost" type="button">이름·용어 메모</button>
+    <span id="model" class="muted"></span>
+  </div>
+</header>
+
+<div id="notesPanel" hidden>
+  <textarea id="notes" rows="3" placeholder="예: 主人公の名前は「ハル」→ 하루. 반말 위주로 번역. 존칭은 '~씨'로 통일."></textarea>
+  <p class="muted">번역할 때마다 함께 전달됩니다. 등장인물 이름이나 말투를 적어 두면 페이지마다 일관되게 번역됩니다.</p>
+</div>
+
+<main>
+  <aside id="pagesCol">
+    <label id="drop" tabindex="0">
+      <input type="file" id="file" accept="image/*" multiple hidden>
+      <strong>이미지 올리기</strong>
+      <span>클릭 · 끌어다 놓기 · 붙여넣기(Ctrl+V)</span>
+    </label>
+    <ul id="pages"></ul>
+    <button id="downloadAll" type="button" hidden>전체 다운로드</button>
+  </aside>
+
+  <section id="stageCol">
+    <div id="empty">
+      <p>만화 페이지를 올리면 말풍선을 찾아 번역해서 덮어씁니다.</p>
+      <p class="muted">세로로 긴 웹툰도 자동으로 나눠서 번역합니다. 이미지는 번역을 위해 Anthropic API로만 전송되고 어디에도 저장되지 않습니다.</p>
+    </div>
+    <div id="viewer" hidden>
+      <div class="toolbar">
+        <span id="status"></span>
+        <span class="spacer"></span>
+        <button id="compare" class="ghost" type="button" title="누르고 있는 동안 원본 표시">원본 보기</button>
+        <button id="addBox" class="ghost" type="button">+ 텍스트 상자</button>
+        <button id="retry" class="ghost" type="button">다시 번역</button>
+        <button id="download" type="button">다운로드</button>
+      </div>
+      <div id="stageWrap">
+        <div id="stage">
+          <canvas id="canvas"></canvas>
+          <div id="boxes"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside id="regionsCol" hidden>
+    <h2>번역문 편집</h2>
+    <p class="muted">상자를 끌어 옮기거나 모서리로 크기를 바꿀 수 있습니다.</p>
+    <div id="regions"></div>
+  </aside>
+</main>
+
+<dialog id="login">
+  <form method="dialog" id="loginForm">
+    <h2>비밀번호</h2>
+    <input type="password" id="password" autocomplete="current-password" autofocus>
+    <p id="loginError" class="error"></p>
+    <button type="submit">들어가기</button>
+  </form>
+</dialog>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
